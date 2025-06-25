@@ -10,10 +10,14 @@ public class GameMane : MonoBehaviour
     [SerializeField] TextMeshProUGUI panelText;
     [SerializeField] TextMeshProUGUI timeText;
     [SerializeField] GameObject startText;
+    [SerializeField] GameObject backText;
+    [SerializeField] GameObject nextText;
 
     private float timer = 0f;
     private bool isPaused = false;
     private bool hasStarted = false;
+
+    public static int CurrentStageID = 1;  // 静的に管理してもいいし、PlayerPrefsに保存も可能
 
     void Start()
     {
@@ -22,19 +26,30 @@ public class GameMane : MonoBehaviour
         hasStarted = false;
     }
 
-    void Update()
+    public void LoadNextStage()
     {
-        if (!isPaused && hasStarted)
-        {
-            timer += Time.deltaTime;
-            timeText.text = timer.ToString("F1") + " s";
-        }
+        CurrentStageID++;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void RestartStage()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void ShowPanel(string text)
     {
-        Debug.Log(timer + "s");
         panelText.text = text;
+        if (text == "Pause")
+        {
+            nextText.SetActive(false);
+            backText.SetActive(true);
+        }
+        else if (text == "Clear")
+        {
+            nextText.SetActive(true);
+            backText.SetActive(false);
+        }
         posePanel.SetActive(true);
         isPaused = true;
     }
@@ -45,15 +60,19 @@ public class GameMane : MonoBehaviour
         isPaused = false;
     }
 
-    public void ReStart()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
     public void StartTimer()
     {
         hasStarted = true;
         startText.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (!isPaused && hasStarted)
+        {
+            timer += Time.deltaTime;
+            timeText.text = timer.ToString("F1") + " s";
+        }
     }
 
     public bool IsPaused()
