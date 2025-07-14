@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class GroundLoader : MonoBehaviour
 {
+    // タイルマップと使用するタイル/プレハブ
     public Tilemap tilemap;
     public Tile groundTile;
     public GameObject boxPrefab;
@@ -12,51 +15,73 @@ public class GroundLoader : MonoBehaviour
 
     void Start()
     {
+        // タイルを初期化し、枠を生成
         tilemap.ClearAllTiles();
         GenerateGroundFrameCentered();
-        LoadGroundMap();
+
+        // 現在のステージIDからステージデータをAPI経由で取得
+        StartCoroutine(LoadGroundMapFromApi(GameMane.CurrentStageID));
     }
 
-    void LoadGroundMap()
+    // APIからステージデータを取得し、マップを生成するコルーチン
+    IEnumerator LoadGroundMapFromApi(int stageId)
     {
-        int jsonFileID = GameMane.CurrentStageID;  // GameManeからIDを取得
-        string path = "Json/stage" + jsonFileID;
-        TextAsset jsonText = Resources.Load<TextAsset>(path);
-        if (jsonText == null)
-        {
-            Debug.LogError("JSONファイルが見つかりません: " + path);
-            return;
-        }
+        string url = "http://localhost/stages/" + stageId;
 
-        GroundMapData mapData = JsonUtility.FromJson<GroundMapData>(jsonText.text);
-
-        foreach (GroundTilePos pos in mapData.ground)
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
-            Vector3Int cellPos = new Vector3Int(pos.x, pos.y, 0);
-            tilemap.SetTile(cellPos, groundTile);
-        }
+            // リクエスト送信
+            yield return request.SendWebRequest();
 
-        if (mapData.boxes != null && boxPrefab != null)
-        {
-            foreach (GroundTilePos box in mapData.boxes)
+            // 通信エラーまたはステージが存在しない場合はセレクト画面に戻す
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                Vector3Int cellPos = new Vector3Int(box.x, box.y, 0);
-                Vector3 worldPos = tilemap.CellToWorld(cellPos) + tilemap.tileAnchor;
-                Instantiate(boxPrefab, worldPos, Quaternion.identity);
+                SceneManager.LoadScene("StageSelectScene");
+                yield break;
             }
-        }
 
-        if (mapData.goal != null && goalPrefab != null)
-        {
-            foreach (GroundTilePos goal in mapData.goal)
+            // レスポンス（JSON文字列）を取得
+            string json = request.downloadHandler.text;
+
+            // JSONをパースしてデータに変換
+            GroundMapData mapData = JsonUtility.FromJson<GroundMapData>(json);
+
+            // 地形初期化と枠の再描画
+            tilemap.ClearAllTiles();
+            GenerateGroundFrameCentered();
+
+            // 取得したセル情報を元に地形・オブジェクトを生成
+            foreach (Cell cell in mapData.cells)
             {
-                Vector3Int cellPos = new Vector3Int(goal.x, goal.y, 0);
-                Vector3 worldPos = tilemap.CellToWorld(cellPos) + tilemap.tileAnchor;
-                Instantiate(goalPrefab, worldPos, Quaternion.identity);
+                Vector3Int cellPos = new Vector3Int(cell.x, cell.y, 0);
+
+                switch (cell.type)
+                {
+                    case "ground":
+                        tilemap.SetTile(cellPos, groundTile);
+                        break;
+
+                    case "box":
+                        if (boxPrefab != null)
+                        {
+                            Vector3 worldPos = tilemap.CellToWorld(cellPos) + tilemap.tileAnchor;
+                            Instantiate(boxPrefab, worldPos, Quaternion.identity);
+                        }
+                        break;
+
+                    case "goal":
+                        if (goalPrefab != null)
+                        {
+                            Vector3 worldPos = tilemap.CellToWorld(cellPos) + tilemap.tileAnchor;
+                            Instantiate(goalPrefab, worldPos, Quaternion.identity);
+                        }
+                        break;
+                }
             }
         }
     }
 
+    // ステージの外枠（地面）を中心を基準に生成する
     void GenerateGroundFrameCentered()
     {
         int width = 17;
@@ -69,6 +94,7 @@ public class GroundLoader : MonoBehaviour
 
         tilemap.ClearAllTiles();
 
+        // 外枠のみにタイルを配置
         for (int x = xMin; x <= xMax; x++)
         {
             for (int y = yMin; y <= yMax; y++)
@@ -79,5 +105,24 @@ public class GroundLoader : MonoBehaviour
                 }
             }
         }
+    }
+
+    // APIから受け取るセル情報
+    [System.Serializable]
+    public class Cell
+    {
+        public int x;
+        public int y;
+        public string type; // "ground", "box", "goal"
+    }
+
+    // APIから受け取るステージ全体のデータ
+    [System.Serializable]
+    public class GroundMapData
+    {
+        public int id;
+        public string name;
+        public string description;
+        public List<Cell> cells;
     }
 }
