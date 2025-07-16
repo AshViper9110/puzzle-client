@@ -25,10 +25,9 @@ public class StartButtonHandler : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// スタートボタンが押されたときに呼ばれるメソッド
-    /// 選択されたステージIDを保存し、GameScene に遷移する
-    /// </summary>
+    // スタートボタンが押されたときに呼ばれるメソッド
+    // 選択されたステージIDを保存し、GameScene に遷移する
+
     public void OnStartButtonPressed()
     {
         // 現在選択されているパネルの ID を取得

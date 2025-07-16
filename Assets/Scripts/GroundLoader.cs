@@ -26,7 +26,7 @@ public class GroundLoader : MonoBehaviour
     // APIからステージデータを取得し、マップを生成するコルーチン
     IEnumerator LoadGroundMapFromApi(int stageId)
     {
-        string url = "http://localhost/stages/" + stageId;
+        string url = "http://localhost:8000/api/stages/" + stageId;
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {

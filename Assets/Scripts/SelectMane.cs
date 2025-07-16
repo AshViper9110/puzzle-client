@@ -32,7 +32,7 @@ public class SelectMane : MonoBehaviour
     /// </summary>
     IEnumerator FetchStageCountAndCreatePanels()
     {
-        string url = "http://localhost/stages";  // Laravel 側のステージ一覧エンドポイント
+        string url = "http://localhost:8000/api/stages";  // Laravel 側のステージ一覧エンドポイント
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
