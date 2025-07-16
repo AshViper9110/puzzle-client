@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 [System.Serializable]
 public class GroundTilePos
 {
@@ -8,7 +10,13 @@ public class GroundTilePos
 [System.Serializable]
 public class GroundMapData
 {
-    public GroundTilePos[] ground;
-    public GroundTilePos[] boxes;  // Å© ñYÇÍÇ∏Ç…í«â¡ÅI
-    public GroundTilePos[] goal;  // Å© ñYÇÍÇ∏Ç…í«â¡ÅI
+    public List<Cell> cells;
+}
+
+[System.Serializable]
+public class Cell
+{
+    public int x;
+    public int y;
+    public string type;
 }

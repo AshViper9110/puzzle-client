@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// ステージ選択用パネルを生成し、左右にスライドして選択できるようにするクラス。
@@ -231,5 +232,10 @@ public class SelectMane : MonoBehaviour
     public class StageCountResponse
     {
         public int count;
+    }
+
+    public void TitleScene()
+    {
+        SceneManager.LoadScene("TitleScene");
     }
 }

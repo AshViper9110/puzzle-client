@@ -30,28 +30,24 @@ public class GroundLoader : MonoBehaviour
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
-            // リクエスト送信
             yield return request.SendWebRequest();
 
-            // 通信エラーまたはステージが存在しない場合はセレクト画面に戻す
             if (request.result != UnityWebRequest.Result.Success)
             {
                 SceneManager.LoadScene("StageSelectScene");
                 yield break;
             }
 
-            // レスポンス（JSON文字列）を取得
             string json = request.downloadHandler.text;
+            Debug.Log("Received JSON: " + json);  // ← デバッグにも便利
 
-            // JSONをパースしてデータに変換
-            GroundMapData mapData = JsonUtility.FromJson<GroundMapData>(json);
+            // JSON配列を直接読み込む
+            Cell[] cells = JsonHelper.FromJson<Cell>(json);
 
-            // 地形初期化と枠の再描画
             tilemap.ClearAllTiles();
             GenerateGroundFrameCentered();
 
-            // 取得したセル情報を元に地形・オブジェクトを生成
-            foreach (Cell cell in mapData.cells)
+            foreach (Cell cell in cells)
             {
                 Vector3Int cellPos = new Vector3Int(cell.x, cell.y, 0);
 
