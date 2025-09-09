@@ -26,7 +26,7 @@ public class GroundLoader : MonoBehaviour
     // APIからステージデータを取得し、マップを生成するコルーチン
     IEnumerator LoadGroundMapFromApi(int stageId)
     {
-        string url = "http://localhost:8000/api/stages/" + stageId;
+        string url = "http://ge202410.japaneast.cloudapp.azure.com/api/stages/" + stageId;
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
@@ -41,13 +41,18 @@ public class GroundLoader : MonoBehaviour
             string json = request.downloadHandler.text;
             Debug.Log("Received JSON: " + json);  // ← デバッグにも便利
 
-            // JSON配列を直接読み込む
-            Cell[] cells = JsonHelper.FromJson<Cell>(json);
+            GroundMapData map = JsonUtility.FromJson<GroundMapData>(json);
+
+            if (map == null || map.cells == null)
+            {
+                Debug.LogError("Failed to parse map data or cells is null");
+                yield break;
+            }
 
             tilemap.ClearAllTiles();
             GenerateGroundFrameCentered();
 
-            foreach (Cell cell in cells)
+            foreach (Cell cell in map.cells)
             {
                 Vector3Int cellPos = new Vector3Int(cell.x, cell.y, 0);
 
