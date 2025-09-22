@@ -12,6 +12,7 @@ public class GroundLoader : MonoBehaviour
     public Tile groundTile;
     public GameObject boxPrefab;
     public GameObject goalPrefab;
+    public GameObject playerPrefab;
 
     void Start()
     {
@@ -26,7 +27,12 @@ public class GroundLoader : MonoBehaviour
     // APIからステージデータを取得し、マップを生成するコルーチン
     IEnumerator LoadGroundMapFromApi(int stageId)
     {
-        string url = "http://ge202410.japaneast.cloudapp.azure.com/api/stages/" + stageId;
+#if UNITY_EDITOR
+        string url = "http://localhost:8000/api/stages/" + stageId;
+#else
+    string url = "http://ge202410.japaneast.cloudapp.azure.com/api/stages/" + stageId;  // Laravel 側のステージ一覧エンドポイント
+#endif
+
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
@@ -75,6 +81,13 @@ public class GroundLoader : MonoBehaviour
                         {
                             Vector3 worldPos = tilemap.CellToWorld(cellPos) + tilemap.tileAnchor;
                             Instantiate(goalPrefab, worldPos, Quaternion.identity);
+                        }
+                        break;
+                    case "player":
+                        if (playerPrefab != null)
+                        {
+                            Vector3 worldPos = tilemap.CellToWorld(cellPos) + tilemap.tileAnchor;
+                            Instantiate(playerPrefab, worldPos, Quaternion.identity);
                         }
                         break;
                 }

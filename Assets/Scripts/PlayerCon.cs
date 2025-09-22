@@ -16,6 +16,7 @@ public class PlayerCon : MonoBehaviour
         rb.gravityScale = 0f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         gameMane = FindObjectOfType<GameMane>();
+        joystick = FindObjectOfType<FixedJoystick>();
     }
 
     private void FixedUpdate()

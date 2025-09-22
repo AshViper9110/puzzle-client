@@ -33,7 +33,12 @@ public class SelectMane : MonoBehaviour
     /// </summary>
     IEnumerator FetchStageCountAndCreatePanels()
     {
-        string url = "http://ge202410.japaneast.cloudapp.azure.com/api/stages/count";  // Laravel 側のステージ一覧エンドポイント
+#if UNITY_EDITOR
+        string url = "http://localhost:8000/api/stages/count";
+#else
+    string url = "http://ge202410.japaneast.cloudapp.azure.com/api/stages/count";  // Laravel 側のステージ一覧エンドポイント
+#endif
+
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
