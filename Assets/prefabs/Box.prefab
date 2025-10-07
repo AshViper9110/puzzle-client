@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6334333231400764723}
   - component: {fileID: 7968346669397672816}
   - component: {fileID: 9068066288564263450}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Box
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.5, y: 0.502, z: 0}
-  m_LocalScale: {x: 0.85, y: 0.85, z: 0.85}
+  m_LocalScale: {x: 0.83, y: 0.83, z: 0.83}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -130,7 +130,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.125, y: 1.125}
+  m_Size: {x: 1.18, y: 1.18}
   m_EdgeRadius: 0
 --- !u!50 &7968346669397672816
 Rigidbody2D:
@@ -140,9 +140,9 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1107913280619492646}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 10
   m_LinearDrag: 1
@@ -171,3 +171,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 898e2b2b003f821439dfd8c724e0e872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveDuration: 0.05
+  cellSize: 1
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  boxLayer:
+    serializedVersion: 2
+    m_Bits: 128

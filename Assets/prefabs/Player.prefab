@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7952811289787318255}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -95,7 +95,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9114580863781767586}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -161,6 +161,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c7e0821c1ecae04aaf04d27cb307c28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveDuration: 0.2
+  cellSize: 1
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  boxLayer:
+    serializedVersion: 2
+    m_Bits: 128
   joystick: {fileID: 0}
-  speed: 5
